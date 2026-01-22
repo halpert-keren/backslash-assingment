@@ -1,0 +1,97 @@
+{
+  "nodes": [
+    {
+      "name": "frontend",
+      "kind": "service",
+      "language": "typescript",
+      "path": "test/frontend",
+      "publicExposed": true
+    },
+    {
+      "name": "auth-service",
+      "kind": "service",
+      "language": "java",
+      "path": "test/auth-service",
+      "publicExposed": false,
+      "vulnerabilities": [
+        {
+          "file": "test/auth-service/src/AuthService.java",
+          "severity": "medium",
+          "message": "SQL injection vulnerability",
+          "metadata": {
+            "cwe": "CWE-89"
+          }
+        }
+      ]
+    },
+    {
+      "name": "user-service",
+      "kind": "service",
+      "language": "java",
+      "path": "test/user-service",
+      "publicExposed": false
+    },
+    {
+      "name": "order-service",
+      "kind": "service",
+      "language": "java",
+      "path": "test/order-service",
+      "publicExposed": false,
+      "vulnerabilities": [
+        {
+          "file": "test/order-service/src/OrderService.java",
+          "severity": "high",
+          "message": "Path traversal vulnerability",
+          "metadata": {
+            "cwe": "CWE-22"
+          }
+        }
+      ]
+    },
+    {
+      "name": "database",
+      "kind": "rds",
+      "metadata": {
+        "cloud": "AWS",
+        "engine": "postgres"
+      }
+    },
+    {
+      "name": "queue",
+      "kind": "sqs",
+      "metadata": {
+        "cloud": "AWS"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "frontend",
+      "to": "auth-service"
+    },
+    {
+      "from": "frontend",
+      "to": "user-service"
+    },
+    {
+      "from": "auth-service",
+      "to": "user-service"
+    },
+    {
+      "from": "auth-service",
+      "to": "database"
+    },
+    {
+      "from": "user-service",
+      "to": "order-service"
+    },
+    {
+      "from": "order-service",
+      "to": "database"
+    },
+    {
+      "from": "order-service",
+      "to": "queue"
+    }
+  ]
+}
